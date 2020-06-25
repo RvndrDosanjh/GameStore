@@ -14,6 +14,8 @@ namespace GameStore.Models
         public string Description { get; set; }
         public int GameId { get; set; }
         public virtual Game Game { get; set; }
+        [Display(Name = "DateAdded")]
+        [Required]
         public DateTime DateAdded { get; set; }
     }
 }

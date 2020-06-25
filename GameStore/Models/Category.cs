@@ -17,9 +17,14 @@ namespace GameStore
     {
         [Key]
         public int CategoryId { get; set; }
+        [Display(Name = "Category Name")]
+        [Required]
         public string CategoryName { get; set; }
+        [Display(Name = "Category Description")]
+        [Required]
         public string CategoryDescription { get; set; }
         public virtual ICollection<Game> Games { get; set; }
-        public DateTime DateAdded { get; set; }
+        [Display(Name = "DateAdded")]
+        public DateTime DateAdded { get; set; } 
     }
 }
