@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using GameStore;
+using GameStore.Models;
 
 namespace GameStore.Data
 {
@@ -29,6 +30,9 @@ namespace GameStore.Data
             }
         }
         public DbSet<GameStore.Category> Category { get; set; }
+        public DbSet<GameStore.Company> Company { get; set; }
+        public DbSet<GameStore.Game> Game { get; set; }
+        public DbSet<GameStore.Models.Update> Update { get; set; }
 
     }
 }

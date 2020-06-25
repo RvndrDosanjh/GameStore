@@ -22,9 +22,10 @@ namespace GameStore
         public string Filename { get; set; }
         [Display(Name = "DateAdded")]
         [Required]
-        public Nullable<System.DateTime> DateAdded { get; set; }
+        public DateTime DateAdded { get; set; }
         public Nullable<int> CompanyId { get; set; }
         public Nullable<int> CategoryId { get; set; }
+        [Display(Name = "Release Date")]
         public Nullable<System.DateTime> ReleaseDate { get; set; }
         public string Description { get; set; }
     
