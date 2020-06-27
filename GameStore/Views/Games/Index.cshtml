@@ -83,7 +83,7 @@
     <h3>@item.Name</h3>
     <p>@item.Description</p>
     <div style="text-align:left;margin-left:1em;margin-bottom:.5em;">Date Added: <strong>@item.DateAdded.ToString("MMM dd, yyyy")</strong></div>
-    <div style="text-align:left;margin-left:1em;margin-bottom:.5em;">Date Released: <strong>@((item.ReleaseDate??DateTime.Now).ToString("MMM dd, yyyy"))</strong></div>
+    <div style="text-align:left;margin-left:1em;margin-bottom:.5em;">Date Released: <strong>@((item.ReleaseDate??DateTime.Now).ToString("MMM dd, yyyy")) (Age: @item.GameAge)</strong></div>
     <div style="margin-bottom:.5em;">
         <span class="downloads">@item.Downloads.Count() Downloads</span>
         <button class="dn" data-toggle="modal" data-target="#download-file" onclick="$('#gid').val(@item.GameId);"><strong>Download Now!</strong></button>
