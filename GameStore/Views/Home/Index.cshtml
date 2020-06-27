@@ -1,8 +1,71 @@
-﻿@{
+﻿@model List<Game>
+@{
     ViewData["Title"] = "Home Page";
 }
+<style>
+    ul {
+        list-style: none outside none;
+        padding-left: 0;
+        margin: 0;
+    }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    .carousel .item {
+        margin-bottom: 60px;
+    }
+
+    .content-slider li {
+        background-color: #ed3020;
+        text-align: center;
+        color: #FFF;
+    }
+
+    .content-slider h3 {
+        margin: 0;
+        padding: 70px 0;
+    }
+
+    .carousel {
+        width: 100%;
+    }
+</style>
+
+
+<div class="carousel">
+    <div class="item">
+        <div class="clearfix" style="max-width:100%;">
+            <ul id="image-gallery" class="gallery list-unstyled cS-hidden">
+
+                @foreach (var item in Model)
+                {
+                    <li data-thumb="/files/@item.Image">
+                        <img src="/files/@item.Image" />
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
 </div>
+
+<script>
+    _a.push(function () {
+        $(document).ready(function () {
+            $("#content-slider").lightSlider({
+                loop: true,
+                keyPress: true
+            });
+            $('#image-gallery').lightSlider({
+                gallery: true,
+                item: 1,
+                thumbItem: 9,
+                slideMargin: 0,
+                speed: 500,
+                auto: true,
+                loop: true,
+                onSliderLoad: function () {
+                    $('#image-gallery').removeClass('cS-hidden');
+                }
+            });
+    });
+   
+    });
+</script>

@@ -7,65 +7,151 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-success">Create New</a> <button class="btn btn-warning" data-toggle="modal" data-target="#search">Search</button>
 </p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Filename)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DateAdded)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ReleaseDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Category)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Company)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Filename)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DateAdded)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ReleaseDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Category.CategoryDescription)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Company.CompanyDescription)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.GameId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.GameId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.GameId">Delete</a>
-            </td>
-        </tr>
+
+<style>
+    .single-game {
+        float:left;
+        text-align: center;
+        width: 31.33%;
+        margin: 1%;
+        border: solid 1px #808080;
+        box-shadow: rgba(0,0,0,.3) 4px 4px 4px;
+    }
+
+    .img-placeholder {
+        height: 200px;
+        background: #eee;
+    }
+
+        .img-placeholder img {
+            max-width: 100%;
+            max-height: 200px;
+        }
+
+    .single-game h3 {
+        color: #641ac3;
+    }
+
+    .downloads {
+        float: left;
+        margin-left: 1em;
+    }
+
+    .downloads, .dn {
+        line-height: 30px;
+        height: 30px;
+        display: inline-block;
+    }
+
+    .dn {
+        text-decoration: none;
+        color: #e47b22;
+        float: right;
+        margin-right: 1em;
+        border:none;
+    }
+
+    .single-game p {
+        height: 60px;
+        overflow: hidden;
+        margin: 1em;
+        text-align: left;
+    }
+
+    .btns a {
+        width: 33.33%;
+        display: inline-block;
+        border-left: solid 1px #808080;
+        border-top: solid 1px #808080;
+        height: 2em;
+        line-height: 2em;
+    }
+
+        .btns a:first-child {
+            border-left: none;
+        }
+</style>
+@foreach (var item in Model)
+{
+<div class="single-game">
+
+    <div class="img-placeholder">
+        <img src="~/files/@item.Image" />
+    </div>
+    <h3>@item.Name</h3>
+    <p>@item.Description</p>
+    <div style="text-align:left;margin-left:1em;margin-bottom:.5em;">Date Added: <strong>@item.DateAdded.ToString("MMM dd, yyyy")</strong></div>
+    <div style="text-align:left;margin-left:1em;margin-bottom:.5em;">Date Released: <strong>@((item.ReleaseDate??DateTime.Now).ToString("MMM dd, yyyy"))</strong></div>
+    <div style="margin-bottom:.5em;">
+        <span class="downloads">@item.Downloads.Count() Downloads</span>
+        <button class="dn" data-toggle="modal" data-target="#download-file" onclick="$('#gid').val(@item.GameId);"><strong>Download Now!</strong></button>
+        <div style="clear:both"></div>
+    </div>
+    <div class="btns">
+        <a asp-action="Edit" asp-route-id="@item.GameId">Edit</a><a asp-action="Details" asp-route-id="@item.GameId">Details</a><a asp-action="Delete" asp-route-id="@item.GameId">Delete</a>
+    </div>
+</div>
+
 }
-    </tbody>
-</table>
+<form method="post" action="/Download">
+    <div class="modal" tabindex="-1" role="dialog" id="download-file">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Download</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="control-label">Email</label>
+                        <input type="text" name="email" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Comment</label>
+                        <textarea name="comment" class="form-control"></textarea>
+                    </div>
+                </div>
+                <input type="hidden" name="id" id="gid"/>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-danger">Download</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<form method="post" action="/Games">
+    <div class="modal" tabindex="-1" role="dialog" id="search">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Search</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="control-label">Game Name</label>
+                        <input type="text" name="name" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Release Date From:</label>
+                        <input type="date" name="from" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Release Date To:</label>
+                        <input type="date" name="to" class="form-control" />
+                    </div>
+                </div>
+             
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-danger">Download</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

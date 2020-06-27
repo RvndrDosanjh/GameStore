@@ -10,9 +10,11 @@
 namespace GameStore
 {
     using GameStore.Models;
+    using Microsoft.AspNetCore.Http;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
 
     public partial class Game
     {
@@ -20,15 +22,20 @@ namespace GameStore
         public int GameId { get; set; }
         public string Name { get; set; }
         public string Filename { get; set; }
+        public string Image { get; set; }
+        [NotMapped]
+        public IFormFile ImageFile { get; set; }
+        [NotMapped]
+        public IFormFile GameFile { get; set; }
         [Display(Name = "DateAdded")]
         [Required]
         public DateTime DateAdded { get; set; }
-        public Nullable<int> CompanyId { get; set; }
-        public Nullable<int> CategoryId { get; set; }
+        public int? CompanyId { get; set; }
+        public int? CategoryId { get; set; }
         [Display(Name = "Release Date")]
-        public Nullable<System.DateTime> ReleaseDate { get; set; }
+        public DateTime? ReleaseDate { get; set; }
         public string Description { get; set; }
-    
+
         public virtual Category Category { get; set; }
         public virtual Company Company { get; set; }
         public virtual ICollection<Update> Updates { get; set; }

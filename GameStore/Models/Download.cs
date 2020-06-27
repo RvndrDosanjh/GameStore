@@ -14,6 +14,7 @@ namespace GameStore.Models
         public virtual Game Game { get; set; }
         public string Email { get; set; }
         public string Comment { get; set; }
+        public DateTime Date { get; set; }
        
     }
 }

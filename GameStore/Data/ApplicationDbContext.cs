@@ -33,6 +33,7 @@ namespace GameStore.Data
         public DbSet<GameStore.Company> Company { get; set; }
         public DbSet<GameStore.Game> Game { get; set; }
         public DbSet<GameStore.Models.Update> Update { get; set; }
+        public DbSet<GameStore.Models.Download> Downloads { get; set; }
 
     }
 }

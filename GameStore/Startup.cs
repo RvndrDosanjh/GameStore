@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Http.Features;
 
 namespace GameStore
 {
@@ -50,7 +51,11 @@ namespace GameStore
             app.UseRouting();
 
             app.UseAuthorization();
-
+            app.Use(async (context, next) =>
+            {
+                context.Features.Get<IHttpMaxRequestBodySizeFeature>().MaxRequestBodySize = null; 
+                await next.Invoke();
+            });
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
