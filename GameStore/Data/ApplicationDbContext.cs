@@ -7,13 +7,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using GameStore;
 using GameStore.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace GameStore.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>
     {
         public ApplicationDbContext() { }
-        public ApplicationDbContext(DbContextOptions<DbContext> options)
+        public ApplicationDbContext(DbContextOptions<IdentityDbContext> options)
             : base(options)
         {
         }
@@ -34,6 +35,7 @@ namespace GameStore.Data
         public DbSet<GameStore.Game> Game { get; set; }
         public DbSet<GameStore.Models.Update> Update { get; set; }
         public DbSet<GameStore.Models.Download> Downloads { get; set; }
+
 
     }
 }

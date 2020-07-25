@@ -5,93 +5,90 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using GameStore;
 using GameStore.Data;
-using Microsoft.AspNetCore.Authorization;
+using GameStore.Models;
 
 namespace GameStore.Controllers
 {
-    public class CompaniesController : Controller
+    public class RolesController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public CompaniesController(ApplicationDbContext context)
+        public RolesController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Companies
+        // GET: Roles
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Company.ToListAsync());
+            return View(await _context.Roles.ToListAsync());
         }
 
-        // GET: Companies/Details/5
-        public async Task<IActionResult> Details(int? id)
+        // GET: Roles/Details/5
+        public async Task<IActionResult> Details(string id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var company = await _context.Company
-                .FirstOrDefaultAsync(m => m.CompanyId == id);
-            if (company == null)
+            var applicationRole = await _context.Roles
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (applicationRole == null)
             {
                 return NotFound();
             }
 
-            return View(company);
+            return View(applicationRole);
         }
-        [Authorize(Roles="Admin")]
-        // GET: Companies/Create
+
+        // GET: Roles/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Companies/Create
+        // POST: Roles/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [Authorize(Roles="Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CompanyId,CompanyName,CEO,CompanyDescription,Address,Phone")] Company company)
+        public async Task<IActionResult> Create([Bind("Id,Name")] ApplicationRole applicationRole)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(company);
+                _context.Add(applicationRole);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(company);
+            return View(applicationRole);
         }
-        [Authorize(Roles="Admin,Support")]
-        // GET: Companies/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+
+        // GET: Roles/Edit/5
+        public async Task<IActionResult> Edit(string id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var company = await _context.Company.FindAsync(id);
-            if (company == null)
+            var applicationRole = await _context.Roles.FindAsync(id);
+            if (applicationRole == null)
             {
                 return NotFound();
             }
-            return View(company);
+            return View(applicationRole);
         }
 
-        // POST: Companies/Edit/5
+        // POST: Roles/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [Authorize(Roles="Admin,Support")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("CompanyId,CompanyName,CEO,CompanyDescription,Address,Phone")] Company company)
+        public async Task<IActionResult> Edit(string id, [Bind("Id,Name")] ApplicationRole applicationRole)
         {
-            if (id != company.CompanyId)
+            if (id != applicationRole.Id)
             {
                 return NotFound();
             }
@@ -100,12 +97,12 @@ namespace GameStore.Controllers
             {
                 try
                 {
-                    _context.Update(company);
+                    _context.Update(applicationRole);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CompanyExists(company.CompanyId))
+                    if (!ApplicationRoleExists(applicationRole.Id))
                     {
                         return NotFound();
                     }
@@ -116,41 +113,51 @@ namespace GameStore.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(company);
+            return View(applicationRole);
         }
 
-        // GET: Companies/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        // GET: Roles/Delete/5
+        public async Task<IActionResult> Delete(string id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var company = await _context.Company
-                .FirstOrDefaultAsync(m => m.CompanyId == id);
-            if (company == null)
+            var applicationRole = await _context.Roles
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (applicationRole == null)
             {
                 return NotFound();
             }
 
-            return View(company);
+            return View(applicationRole);
         }
 
-        // POST: Companies/Delete/5
+        // POST: Roles/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var company = await _context.Company.FindAsync(id);
-            _context.Company.Remove(company);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            var applicationRole = await _context.Roles.FindAsync(id);
+            if (_context.UserRoles.Any(x => x.RoleId == id))
+            {
+                ViewBag.Error = "There is a user with this role. The role cannot be removed.";
+                return View(applicationRole);
+            }
+            else
+            {
+                
+                _context.Roles.Remove(applicationRole);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction(nameof(Index));
+            }
         }
 
-        private bool CompanyExists(int id)
+        private bool ApplicationRoleExists(string id)
         {
-            return _context.Company.Any(e => e.CompanyId == id);
+            return _context.Roles.Any(e => e.Id == id);
         }
     }
 }

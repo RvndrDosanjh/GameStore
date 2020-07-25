@@ -1,0 +1,35 @@
+﻿@model IEnumerable<GameStore.Models.UserRole>
+@using Microsoft.AspNetCore.Identity.EntityFrameworkCore
+@{
+    ViewData["Title"] = "Index";
+    List<ApplicationUser> users = ViewBag.Users;
+    List<ApplicationRole> roles = ViewBag.Roles;
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>User</th>
+            <th>Role</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@users.FirstOrDefault(x => x.Id == item.UserId).UserName</td>
+                <td>@roles.FirstOrDefault(x => x.Id == item.RoleId).Name</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.UserId,@item.RoleId">Edit</a> |
+                    <a asp-action="Delete" asp-route-id="@item.UserId,@item.RoleId">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
