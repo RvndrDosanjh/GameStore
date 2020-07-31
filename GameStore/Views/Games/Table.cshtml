@@ -1,0 +1,40 @@
+﻿@model List<DataTableDTO>
+@{
+    ViewData["Title"] = "Table";
+}
+
+<h1>Data Table <a href="/Games"  style="font-size:.5em;">Index View</a></h1> 
+<table id="games-table" class="table table-striped table-bordered" style="width:100%">
+    <thead>
+        <tr>
+            <th>Image</th>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Release Date</th>
+            <th>Company</th>
+            <th>Downloads</th>
+            <th>Age</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+        <tr>
+            <td><img src="/files/@item.Image" style="max-width:50px;"/></td>
+            <td>@item.Name</td>
+            <td>@item.Category</td>
+            <td>@item.ReleaseDate</td>
+            <td>@item.Company</td>
+            <td>@item.DownloadCount</td>
+            <td>@item.Age</td>
+        </tr>
+        }
+
+</table>
+
+<script>
+    _a.push(() => {
+        $('#games-table').DataTable();
+    });
+</script>
+

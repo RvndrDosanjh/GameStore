@@ -9,6 +9,7 @@ using GameStore;
 using GameStore.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Routing;
+using GameStore.Models;
 
 namespace GameStore.Controllers
 {
@@ -29,20 +30,33 @@ namespace GameStore.Controllers
             return View(await applicationDbContext.ToListAsync());
         }
 
-        
+
         [HttpPost]
         public async Task<IActionResult> Index([FromForm] DateTime? from, [FromForm] DateTime? to, [FromForm] string name)
         {
             var games = await _context.Game.Include(g => g.Category).Include(g => g.Company).Include(g => g.Downloads)
                 .Where(x => x.Name.Contains(name) &&
-            (from == null || x.ReleaseDate>= from) && 
-             (to == null || x.ReleaseDate<= to)          
+            (from == null || x.ReleaseDate >= from) &&
+             (to == null || x.ReleaseDate <= to)
             ).ToListAsync();
 
             //   var applicationDbContext = _context.Game.Include(g => g.Category).Include(g => g.Company).Include(g => g.Downloads);
             return View(games);
         }
-
+        public async Task<IActionResult> Table()
+        {
+            var applicationDbContext = _context.Game.Select(x => new DataTableDTO
+            {
+                Age = x.GameAge,
+                Category = x.Category.CategoryName,
+                Company = x.Company.CompanyName,
+                DownloadCount = x.Downloads.Count,
+                Image = x.Image,
+                Name = x.Name,
+                ReleaseDate = x.ReleaseDate.Value.ToString("yyyy/mm/dd")
+            });
+            return View(await applicationDbContext.ToListAsync());
+        }
         [HttpPost]
         [Route("Download")]
         public async Task<IActionResult> Download([FromForm] int id, [FromForm] string email, [FromForm] string Comment)
@@ -56,7 +70,7 @@ namespace GameStore.Controllers
                 GameId = id
             });
             _context.SaveChanges();
-         //   var applicationDbContext = _context.Game.Include(g => g.Category).Include(g => g.Company).Include(g => g.Downloads);
+            //   var applicationDbContext = _context.Game.Include(g => g.Category).Include(g => g.Company).Include(g => g.Downloads);
             return Redirect($"/files/{game.Filename}");
         }
 
@@ -155,44 +169,44 @@ namespace GameStore.Controllers
             }
 
 
-                try
+            try
+            {
+                if (game.ImageFile != null)
                 {
-                    if (game.ImageFile != null)
-                    {
-                        var ms = game.ImageFile.OpenReadStream();
-                        var bytes = new byte[ms.Length];
-                        ms.Position = 0;
-                        ms.Read(bytes, 0, (int)ms.Length);
-                        string filename = $"i{game.GameId}-{game.ImageFile.FileName.Replace(" ", "-")}";
-                        game.Image = filename;
-                        System.IO.File.WriteAllBytes(System.IO.Path.Combine(_env.WebRootPath, "files", filename), bytes);
-                    }
-                    if (game.GameFile != null)
-                    {
-                        var ms = game.GameFile.OpenReadStream();
-                        var bytes = new byte[ms.Length];
-                        ms.Position = 0;
-                        ms.Read(bytes, 0, (int)ms.Length);
-                        var filename = $"g{game.GameId}-{game.GameFile.FileName.Replace(" ", "-")}";
-                        game.Filename = filename;
-                        System.IO.File.WriteAllBytes(System.IO.Path.Combine(_env.WebRootPath, "files", filename), bytes);
+                    var ms = game.ImageFile.OpenReadStream();
+                    var bytes = new byte[ms.Length];
+                    ms.Position = 0;
+                    ms.Read(bytes, 0, (int)ms.Length);
+                    string filename = $"i{game.GameId}-{game.ImageFile.FileName.Replace(" ", "-")}";
+                    game.Image = filename;
+                    System.IO.File.WriteAllBytes(System.IO.Path.Combine(_env.WebRootPath, "files", filename), bytes);
+                }
+                if (game.GameFile != null)
+                {
+                    var ms = game.GameFile.OpenReadStream();
+                    var bytes = new byte[ms.Length];
+                    ms.Position = 0;
+                    ms.Read(bytes, 0, (int)ms.Length);
+                    var filename = $"g{game.GameId}-{game.GameFile.FileName.Replace(" ", "-")}";
+                    game.Filename = filename;
+                    System.IO.File.WriteAllBytes(System.IO.Path.Combine(_env.WebRootPath, "files", filename), bytes);
 
-                    }
-                        _context.Update(game);
-                        await _context.SaveChangesAsync();
                 }
-                catch (DbUpdateConcurrencyException)
+                _context.Update(game);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!GameExists(game.GameId))
                 {
-                    if (!GameExists(game.GameId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    return NotFound();
                 }
-                return RedirectToAction(nameof(Index));
+                else
+                {
+                    throw;
+                }
+            }
+            return RedirectToAction(nameof(Index));
 
 
         }
