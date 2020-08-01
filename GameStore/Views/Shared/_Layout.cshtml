@@ -24,8 +24,11 @@
                 <a asp-controller="Games" asp-action="Index" data-controller="games" class="list-group-item list-group-item-action bg-light">Games</a>
                 <a asp-controller="Companies" asp-action="Index" data-controller="companies" class="list-group-item list-group-item-action bg-light">Companies</a>
                 <a asp-controller="Updates" asp-action="Index" data-controller="updates" class="list-group-item list-group-item-action bg-light">Updates/Patches/Skins</a>
+               @if (User.IsInRole("Admin"))
+               {
                 <a asp-controller="Roles" asp-action="Index" data-controller="roles" class="list-group-item list-group-item-action bg-light">Roles</a>
                 <a asp-controller="UserRoles" asp-action="Index" data-controller="userroles" class="list-group-item list-group-item-action bg-light">User Roles</a>
+               }
             </div>
         </div>
 
